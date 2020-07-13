@@ -19,7 +19,7 @@ export class DataService {
   getEvents(latest: boolean = false) {
     return new Promise(resolve => {
       if ( latest || !this.eventsLoaded ) {
-        this.af.list<Event>('events').valueChanges().subscribe((events: Event[]) => {
+        this.af.list<any>('events').valueChanges().subscribe((events: any[]) => {
           this.events = events;
           this.eventsLoaded = true;
           resolve(events);
@@ -35,6 +35,6 @@ export class DataService {
   }
 
   deleteAllEvents() {
-    this.af.list<Event>('events').remove();
+    // this.af.list<Event>('events').remove();
   }
 }

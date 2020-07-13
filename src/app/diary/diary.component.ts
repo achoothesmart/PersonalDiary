@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 // import { AngularFireList } from 'angularfire2/database';
 import { Event } from '../models/Event';
 import { EventView } from '../models/EventView';
+import { ModalPopup } from '../models/ModalPopup';
 
 @Component({
   selector: 'app-diary',
@@ -13,65 +14,92 @@ export class DiaryComponent implements OnInit {
 
   // diary = ['Hello World!', 'Welcome to Personal Diary', 'Developed by Prasanna Ashok'];
   events: Event[];
+  selectedEventId: number;
   eventViewItems: EventView[];
   eventViewItem: EventView;
-  // newEvent: Event = new Event('', '', '');
-  // title = '';
-  // description = '';
+
   loading = '';
   canDelete: boolean;
+  commonModal: ModalPopup;
 
-  constructor(private ds: DataService ) {
+  constructor(private ds: DataService) {
     this.loading = 'Loading...';
-    // ds.getEvents().then((events: Event[]) => {
-    //   this.events = events;
-    //   this.loading = '';
-    // });
     this.getLatestEvents(false);
   }
 
   ngOnInit() {
     this.getLatestEvents();
+    this.commonModal = new ModalPopup('Sample Modal', 'Test', 'Ok', 'Cancel');
   }
 
+  // Event Triggers
+  onEventClick(eventId) {
+    this.selectedEventId = eventId;
+  }
+
+  onDeleteClick(id) {
+    console.log(id);
+    this.selectedEventId = id;
+    this.commonModal = new ModalPopup(
+      'Delete', 'Do you want to delete this event', 'Confirm Delete', 'Cancel'
+    );
+
+    this.commonModal.resultCommand = 'DELETE';
+  }
+
+  // onDeleteAllClick() {
+  //   this.commonModal = new ModalPopup(
+  //     'Delete All', 'Do you want to delete all ' + this.events.length + ' events?', 'Confirm Delete All', 'Cancel'
+  //   );
+  //   this.commonModal.resultCommand = 'DELETEALL';
+  // }
+
+  // Support functions
   getLatestEvents(force: boolean = true) {
     this.ds.getEvents(force).then((events: Event[]) => {
       this.events = events;
       if (this.events.length > 0) {
         this.loading = '';
-        // this.loadEventViewItems();
       }
-      else{
+      else {
         this.loading = 'No Events in Diary';
       }
     });
   }
 
-  onEventClick(eventId) {
-    console.log(eventId);
+  deleteEvent(id): any {
+    console.log('...deleting event id ' + id);
+    this.events.filter((event)=>{
+      return event.id === id;
+    })[0].isDeleted = true;
   }
 
-  // loadEventViewItems() {
-  //   this.eventViewItems = [];
-  //   this.events.forEach(event => {
-  //     this.eventViewItem
-  //   });
+  // deleteAllEvents() {
+  //   if (this.events.length <= 0) {
+  //     return;
+  //   }
+  //   this.ds.deleteAllEvents();
+  //   this.getLatestEvents();
   // }
 
-  deleteAllEvents() {
-    if (this.events.length <= 0) {
-      return;
+  modalConfirm() {
+    switch (this.commonModal.resultCommand) {
+      case 'DELETE':
+        this.deleteEvent(this.selectedEventId);
+        break;
+      // case 'DELETEALL':
+      //   this.deleteAllEvents();
+      //   break;
+      case '':
+        console.log('nothing');
+        break;
     }
-    this.canDelete = confirm('Do you want to delete all the Events from Diary?');
-    if (this.canDelete) {
-      this.ds.deleteAllEvents();
-      this.getLatestEvents();
-    }
+    this.commonModal.resultCommand = '';
   }
 
-  // resetInputs() {
-  //   this.title = '';
-  //   this.description = '';
-  // }
-
+  modalCancel(){
+    this.commonModal.resultCommand = '';
+  }
 }
+
+

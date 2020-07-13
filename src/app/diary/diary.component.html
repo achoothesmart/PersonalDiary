@@ -1,25 +1,50 @@
 <div class="container">
 
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-md-12">
       <input class="btn btn-primary" type="button" value="Delete All" (click)='deleteAllEvents()'/>
     </div>
-  </div>
+  </div> -->
+
+
+  <!-- Button that triggers modal -->
+  <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" (click)="onDeleteAllClick()">
+    Delete All Events
+  </button> -->
 
   <div class="row">
     <div class="col-md-12">
       {{loading}}
       <div class="list-group">
-        <div href="#"
-          class="list-group-item list-group-item-action flex-column align-items-start"
-          *ngFor="let event of events"
-          (click)="onEventClick(event.id)" >
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{event.title}}</h5>
-            <small class="text-muted">{{event.date}} {{event.time}}</small>
+
+        <div href="#" class="list-group-item list-group-item-action flex-column align-items-start"
+          *ngFor="let event of events | eventsViewPipe" (click)="onEventClick(event.id)">
+          <div *ngIf="!event.isDeleted">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1">{{event.title}}</h5>
+              <small class="text-muted">{{event.date}} {{event.time}}</small>
+            </div>
+            <p class="mb-1">{{event.description}}</p>
+            <div class="control-panel" *ngIf="this.selectedEventId == event.id">
+
+              <!-- Control Panel for every Event | Appears when selected -->
+              <div class="flex-container">
+                <div>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                    Edit
+                  </button>
+                </div>
+                <div>
+                  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" (click)="onDeleteClick(event.id)">
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+            </div>
           </div>
-          <p class="mb-1">{{event.description}}</p>
         </div>
+
       </div>
       <!-- <ol>
         <li *ngFor="let event of events ">{{event.date}} {{event.time}} : {{event.title}} - {{event.description}}</li>
@@ -27,30 +52,34 @@
     </div>
   </div>
 
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-  Launch demo modal
-</button>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            {{ commonModal.titleText }}
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ commonModal.messageText }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)='modalCancel()'>
+            {{commonModal.cancelButtonText}}
+          </button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)='modalConfirm()'>
+            {{commonModal.okButtonText}}
+          </button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </div>

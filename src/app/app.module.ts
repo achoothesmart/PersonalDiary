@@ -16,6 +16,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { NewEventComponent } from './new-event/new-event.component';
 
 import { DatePipe } from '@angular/common';
+import { EventsViewPipe } from './shared/pipes/EventsView.pipe';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { DatePipe } from '@angular/common';
     DiaryComponent,
     TodoComponent,
     TodoItemComponent,
-    NewEventComponent
+    NewEventComponent,
+    EventsViewPipe
   ],
   imports: [
     BrowserModule,
